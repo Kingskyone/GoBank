@@ -1,4 +1,4 @@
-package main
+package files
 
 import (
 	"fmt"
@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func main() {
+func main2() {
 	NotifMulti()
 
 	chok := make(chan os.Signal, 0)

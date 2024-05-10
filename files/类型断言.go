@@ -1,8 +1,8 @@
-package main
+package files
 
 import "fmt"
 
-func main() {
+func main7() {
 	// 编译器推断
 	fmt.Println(max(3, 4))
 

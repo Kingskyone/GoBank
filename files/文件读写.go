@@ -1,4 +1,4 @@
-package main
+package files
 
 import (
 	"bufio"
@@ -9,7 +9,7 @@ import (
 	"path"
 )
 
-func main() {
+func main6() {
 	ReadFilesLineBufio("./go.mod")
 }
 

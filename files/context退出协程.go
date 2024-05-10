@@ -1,4 +1,4 @@
-package main
+package files
 
 import (
 	"context"
@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func main() {
+func main3() {
 	ContextCase2()
 
 	chok := make(chan os.Signal, 0)

@@ -1,4 +1,4 @@
-package main
+package files
 
 import (
 	"fmt"
@@ -6,7 +6,7 @@ import (
 	"sync/atomic"
 )
 
-func main() {
+func main1() {
 	AtomicCase2()
 }
 

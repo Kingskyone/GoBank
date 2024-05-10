@@ -1,4 +1,4 @@
-package main
+package files
 
 import (
 	"errors"
@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func main() {
+func main8() {
 	// 可以叠加
 	//a := sumMiddleWare(sumMiddleWare(Sum))
 	//a := sumMiddleWare(Sum)

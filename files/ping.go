@@ -1,4 +1,4 @@
-package main
+package files
 
 import (
 	"bytes"
@@ -28,7 +28,7 @@ type ICMP struct {
 	SequenceNum uint16 //两个字节
 }
 
-func main() {
+func main4() {
 	//var a uint16 = 33
 	//var b uint16 = 33
 	getCommonArgs()

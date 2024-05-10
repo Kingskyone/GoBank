@@ -1,4 +1,4 @@
-package main
+package files
 
 import (
 	"fmt"
@@ -15,7 +15,7 @@ func (d Dts) CALL() {
 	fmt.Println("Call:" + strconv.Itoa(d.Name))
 }
 
-func main() {
+func main5() {
 	dt := Dts{
 		Name: 1,
 		Data: 1,
