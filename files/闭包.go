@@ -4,31 +4,30 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"time"
 )
 
-func main8() {
-	// 可以叠加
-	//a := sumMiddleWare(sumMiddleWare(Sum))
-	//a := sumMiddleWare(Sum)
-	//fmt.Println(a(1, 2))
-	//
-	//fmt.Println(a.Accu(1, 2, 3, 4, 5))
-
-	//a := tool() // 声明的时候会带上闭包的数字
-	//b := tool()
-	//fmt.Println(a())
-	//fmt.Println(a())
-	//fmt.Println(a())
-	//fmt.Println(a())
-	//fmt.Println(b())
-	//fmt.Println(b())
-	//fmt.Println(b())
-	//fmt.Println(b())
-
-	xiec()
-	time.Sleep(time.Second * 10)
-}
+//func main8() {
+//	// 可以叠加
+//	//a := sumMiddleWare(sumMiddleWare(Sum))
+//	//a := sumMiddleWare(Sum)
+//	//fmt.Println(a(1, 2))
+//	//
+//	//fmt.Println(a.Accu(1, 2, 3, 4, 5))
+//
+//	//a := tool() // 声明的时候会带上闭包的数字
+//	//b := tool()
+//	//fmt.Println(a())
+//	//fmt.Println(a())
+//	//fmt.Println(a())
+//	//fmt.Println(a())
+//	//fmt.Println(b())
+//	//fmt.Println(b())
+//	//fmt.Println(b())
+//	//fmt.Println(b())
+//
+//	xiec()
+//	time.Sleep(time.Second * 10)
+//}
 
 func Sum(a, b int) (sum int, err error) {
 	if a <= 0 && b <= 0 {

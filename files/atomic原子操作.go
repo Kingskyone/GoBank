@@ -6,9 +6,9 @@ import (
 	"sync/atomic"
 )
 
-func main1() {
-	AtomicCase2()
-}
+//func main1() {
+//	AtomicCase2()
+//}
 
 func AtomicCase() {
 	var count int64 = 10

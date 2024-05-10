@@ -9,9 +9,9 @@ import (
 	"path"
 )
 
-func main6() {
-	ReadFilesLineBufio("./go.mod")
-}
+//func main6() {
+//	ReadFilesLineBufio("./go.mod")
+//}
 
 // 获取文件夹内的文件
 func getFiles(dir string) []string {

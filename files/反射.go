@@ -15,34 +15,34 @@ func (d Dts) CALL() {
 	fmt.Println("Call:" + strconv.Itoa(d.Name))
 }
 
-func main5() {
-	dt := Dts{
-		Name: 1,
-		Data: 1,
-	}
-	t := reflect.TypeOf(dt)
-	v := reflect.ValueOf(&dt).Elem() //需要该数据 传指针
-
-	// 反射获取结构体中参数、标签、修改数据
-	for i := 0; i < t.NumField(); i++ {
-		field := t.Field(i)
-		jsonField := field.Tag.Get("json")
-		if jsonField == "" {
-			v.Field(i).SetInt(123)
-		}
-	}
-
-	//反射获取结构体方法并调用
-	for i := 0; i < t.NumMethod(); i++ {
-		methodType := t.Method(i)
-		if methodType.Name == "CAll" {
-			methodValue := v.Method(i)
-			methodValue.Call([]reflect.Value{})
-		}
-	}
-
-	fmt.Println(dt)
-}
+//func main5() {
+//	dt := Dts{
+//		Name: 1,
+//		Data: 1,
+//	}
+//	t := reflect.TypeOf(dt)
+//	v := reflect.ValueOf(&dt).Elem() //需要该数据 传指针
+//
+//	// 反射获取结构体中参数、标签、修改数据
+//	for i := 0; i < t.NumField(); i++ {
+//		field := t.Field(i)
+//		jsonField := field.Tag.Get("json")
+//		if jsonField == "" {
+//			v.Field(i).SetInt(123)
+//		}
+//	}
+//
+//	//反射获取结构体方法并调用
+//	for i := 0; i < t.NumMethod(); i++ {
+//		methodType := t.Method(i)
+//		if methodType.Name == "CAll" {
+//			methodValue := v.Method(i)
+//			methodValue.Call([]reflect.Value{})
+//		}
+//	}
+//
+//	fmt.Println(dt)
+//}
 
 // 反射判断obj的类型
 func refType(obj any) {

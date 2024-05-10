@@ -2,20 +2,18 @@ package files
 
 import (
 	"fmt"
-	"os"
-	"os/signal"
 	"strconv"
 	"time"
 )
 
-func main2() {
-	NotifMulti()
-
-	chok := make(chan os.Signal, 0)
-	signal.Notify(chok, os.Interrupt, os.Kill)
-	<-chok
-
-}
+//func main2() {
+//	NotifMulti()
+//
+//	chok := make(chan os.Signal, 0)
+//	signal.Notify(chok, os.Interrupt, os.Kill)
+//	<-chok
+//
+//}
 
 // 协程间通讯
 func Communication() {

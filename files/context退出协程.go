@@ -3,18 +3,16 @@ package files
 import (
 	"context"
 	"fmt"
-	"os"
-	"os/signal"
 	"time"
 )
 
-func main3() {
-	ContextCase2()
-
-	chok := make(chan os.Signal, 0)
-	signal.Notify(chok, os.Interrupt, os.Kill)
-	<-chok
-}
+//func main3() {
+//	ContextCase2()
+//
+//	chok := make(chan os.Signal, 0)
+//	signal.Notify(chok, os.Interrupt, os.Kill)
+//	<-chok
+//}
 
 // context 上下文信号传递
 

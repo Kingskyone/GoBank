@@ -2,20 +2,20 @@ package files
 
 import "fmt"
 
-func main7() {
-	// 编译器推断
-	fmt.Println(max(3, 4))
-
-	// 指定
-	fmt.Println(max[int](3, 4))
-
-	fmt.Println(getComparable(3, 3))
-
-	//fxPrintLn([]int{})
-
-	//a.Get()
-
-}
+//func main7() {
+//	// 编译器推断
+//	fmt.Println(max(3, 4))
+//
+//	// 指定
+//	fmt.Println(max[int](3, 4))
+//
+//	fmt.Println(getComparable(3, 3))
+//
+//	//fxPrintLn([]int{})
+//
+//	//a.Get()
+//
+//}
 
 // 泛型  一般情况不需要interface括起来，当出现指针*时避免出现与乘法混淆
 func max[T interface{ int | float64 }](a, b T) T {
