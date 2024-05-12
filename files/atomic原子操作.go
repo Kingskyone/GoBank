@@ -8,7 +8,7 @@ import (
 
 //func main1() {
 //	AtomicCase2()
-//}
+//}z
 
 func AtomicCase() {
 	var count int64 = 10
