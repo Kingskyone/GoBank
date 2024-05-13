@@ -6,22 +6,28 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
-// Store 允许查询以事务的形式而不是单个SQL
-type Store struct {
+// Store 接口
+type Store interface {
+	Querier
+	TransferTx(ctx context.Context, arg TransferTxParams) (TransferTxResult, error)
+}
+
+// SQLStore 使用实际的数据库连接，允许查询以事务的形式而不是单个SQL
+type SQLStore struct {
 	*Queries // 组合
 	db       *pgx.Conn
 }
 
 // 创建一个Store
-func NewStore(db *pgx.Conn) *Store {
-	return &Store{
+func NewStore(db *pgx.Conn) Store {
+	return &SQLStore{
 		Queries: New(db),
 		db:      db,
 	}
 }
 
 // 创建一个执行事务的函数，根据是否出错进行提交或者回滚  保证原子性
-func (store *Store) execTx(ctx context.Context, fn func(*Queries) error) error {
+func (store *SQLStore) execTx(ctx context.Context, fn func(*Queries) error) error {
 	tx, err := store.db.BeginTx(ctx, pgx.TxOptions{})
 	if err != nil {
 		return err
@@ -59,7 +65,7 @@ var txKey = struct{}{}
 
 // TransferTx 实现转账操作
 // A向B转账，按顺序：创建transfer记录、创建A与B的entry记录，更改A与B的account余额
-func (store *Store) TransferTx(ctx context.Context, arg TransferTxParams) (TransferTxResult, error) {
+func (store *SQLStore) TransferTx(ctx context.Context, arg TransferTxParams) (TransferTxResult, error) {
 	var result TransferTxResult
 	// 调用execTx，传入CRUD操作组成函数
 	err := store.execTx(ctx, func(q *Queries) error {
@@ -79,7 +85,7 @@ func (store *Store) TransferTx(ctx context.Context, arg TransferTxParams) (Trans
 		}
 		fmt.Println(txName, "create entry")
 		// 转出账户创建Entry
-		result.FromEntry, err = q.CreateEctry(ctx, CreateEctryParams{
+		result.FromEntry, err = q.CreateEntry(ctx, CreateEntryParams{
 			AccountID: arg.FromAccountID,
 			Amount:    -arg.Amount,
 		})
@@ -87,7 +93,7 @@ func (store *Store) TransferTx(ctx context.Context, arg TransferTxParams) (Trans
 			return err
 		}
 		// 转入账户创建Entry
-		result.ToEntry, err = q.CreateEctry(ctx, CreateEctryParams{
+		result.ToEntry, err = q.CreateEntry(ctx, CreateEntryParams{
 			AccountID: arg.ToAccountID,
 			Amount:    arg.Amount,
 		})

@@ -1,4 +1,4 @@
--- name: CreateEctry :one
+-- name: CreateEntry :one
 INSERT INTO ectries (
     account_id,
     amount
@@ -7,17 +7,17 @@ INSERT INTO ectries (
      ) RETURNING *;
 
 
--- name: GetEctry :one
+-- name: GetEntry :one
 SELECT * FROM ectries WHERE id= $1 LIMIT 1;
 
--- name: ListEctryWithID :many
+-- name: ListEntryWithID :many
 SELECT * FROM ectries ORDER BY id LIMIT $1 OFFSET $2;
 
--- name: ListEctryWithAccountID :many
+-- name: ListEntryWithAccountID :many
 SELECT * FROM ectries WHERE account_id=$1 ORDER BY id LIMIT $2 OFFSET $3;
 
--- name: UpdateEctry :one
+-- name: UpdateEntry :one
 UPDATE ectries SET amount = $2 WHERE id = $1 RETURNING *;
 
--- name: DeleteEctry :exec
+-- name: DeleteEntry :exec
 DELETE FROM ectries WHERE id = $1;

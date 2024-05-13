@@ -1,6 +1,7 @@
 package db
 
 import (
+	"GoBank/util"
 	"context"
 	"github.com/jackc/pgx/v5"
 	_ "github.com/lib/pq"
@@ -9,18 +10,20 @@ import (
 	"testing"
 )
 
-const (
-	dbSourse = "postgresql://root:secret@localhost:5432/simple_bank?sslmode=disable"
-)
-
 var testQueries *Queries
 var testDB *pgx.Conn
 
 func TestMain(m *testing.M) {
 	var err error
+
+	config, err := util.LoadConfig("../..")
+	if err != nil {
+		log.Fatal("cannot load config:", err)
+	}
+
 	ctx := context.Background()
 	// 建立连接
-	testDB, err = pgx.Connect(ctx, dbSourse)
+	testDB, err = pgx.Connect(ctx, config.DbSource)
 	if err != nil {
 		log.Fatal("cannot connect to db:", err)
 	}

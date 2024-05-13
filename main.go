@@ -1,87 +1,34 @@
 package main
 
 import (
+	"GoBank/api"
 	db "GoBank/db/sqlc"
+	"GoBank/util"
 	"context"
-	"fmt"
 	"github.com/jackc/pgx/v5"
+	_ "github.com/lib/pq"
+	"log"
 )
 
 func main() {
-	testDB, err := pgx.Connect(context.Background(), "postgresql://root:secret@localhost:5432/simple_bank?sslmode=disable")
+	// 读取配置文件中的内容
+	config, err := util.LoadConfig(".")
 	if err != nil {
-		fmt.Println(err)
+		log.Fatal("cannot load config:", err)
 	}
-	store := db.NewStore(testDB)
 
-	a, err0 := store.TransferTx(context.Background(), db.TransferTxParams{
-		FromAccountID: 1,
-		ToAccountID:   2,
-		Amount:        100,
-	})
+	ctx := context.Background()
+	conn, err := pgx.Connect(ctx, config.DbSource)
+	if err != nil {
+		log.Fatal("cannot connect to db:", err)
+	}
 
-	fmt.Println(a, err0)
+	store := db.NewStore(conn)
+	server := api.NewServer(store)
+
+	err = server.Start(config.ServerAddress)
+	if err != nil {
+		log.Fatal("cannot start server:", err)
+	}
+
 }
-
-//
-//func oneRoutine() {
-//	mp := make(map[string]int)
-//	list := []string{"A", "B", "C", "D"}
-//	for i := 0; i < 20; i++ {
-//		for _, item := range list {
-//			_, ok := mp[item]
-//			if !ok {
-//				mp[item] = 0
-//			}
-//			mp[item]++
-//		}
-//	}
-//	fmt.Println(mp)
-//}
-//
-//type safeMap struct {
-//	data   map[string]int
-//	locker sync.Mutex
-//}
-//
-//func manyRoutine() {
-//	mp := safeMap{
-//		data:   make(map[string]int),
-//		locker: sync.Mutex{},
-//	}
-//	list := []string{"A", "B", "C", "D"}
-//
-//	wg := sync.WaitGroup{}
-//	for i := 0; i < 20; i++ {
-//		wg.Add(1)
-//		go func() {
-//			defer wg.Done()
-//			mp.locker.Lock()
-//			defer mp.locker.Unlock()
-//			for _, item := range list {
-//				_, ok := mp.data[item]
-//				if !ok {
-//					mp.data[item] = 0
-//				}
-//				mp.data[item]++
-//			}
-//		}()
-//
-//	}
-//	wg.Wait()
-//	fmt.Println(mp)
-//}
-//
-//// 协程安全的Map 针对读多写少场景
-//func MapCase() {
-//	mp := sync.Map{}
-//	// 存
-//	mp.Store("id", 1)
-//	mp.Store("val", 1)
-//
-//	// 查，不存在则设置,存在则不设置并返回true  false不存在
-//	fmt.Println(mp.LoadOrStore("id", 12))
-//
-//	// 查
-//	fmt.Println(mp.Load("id"))
-//}

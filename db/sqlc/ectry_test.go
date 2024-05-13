@@ -11,11 +11,11 @@ import (
 )
 
 func CreateRandomEctry(t *testing.T) Ectry {
-	arg := CreateEctryParams{
+	arg := CreateEntryParams{
 		AccountID: 1,
 		Amount:    float64(util.RandomAmount()),
 	}
-	entry, err := testQueries.CreateEctry(context.Background(), arg)
+	entry, err := testQueries.CreateEntry(context.Background(), arg)
 
 	require.NoError(t, err)
 	require.NotEmpty(t, entry)
@@ -33,7 +33,7 @@ func TestQueries_CreateEctry(t *testing.T) {
 
 func TestQueries_GetEctry(t *testing.T) {
 	entry1 := CreateRandomEctry(t)
-	entry2, err := testQueries.GetEctry(context.Background(), entry1.ID)
+	entry2, err := testQueries.GetEntry(context.Background(), entry1.ID)
 
 	require.NoError(t, err)
 	require.NotEmpty(t, entry2)
@@ -47,12 +47,12 @@ func TestQueries_UpdateEctry(t *testing.T) {
 	entry1 := CreateRandomEctry(t)
 	fmt.Println(entry1)
 
-	arg := UpdateEctryParams{
+	arg := UpdateEntryParams{
 		ID:     entry1.ID,
 		Amount: float64(util.RandomAmount()),
 	}
 
-	entry2, err := testQueries.UpdateEctry(context.Background(), arg)
+	entry2, err := testQueries.UpdateEntry(context.Background(), arg)
 	fmt.Println(entry2)
 
 	require.NoError(t, err)
@@ -65,10 +65,10 @@ func TestQueries_UpdateEctry(t *testing.T) {
 
 func TestQueries_DeleteEctry(t *testing.T) {
 	entry1 := CreateRandomEctry(t)
-	err := testQueries.DeleteEctry(context.Background(), entry1.ID)
+	err := testQueries.DeleteEntry(context.Background(), entry1.ID)
 	require.NoError(t, err)
 
-	entry2, err := testQueries.GetEctry(context.Background(), entry1.ID)
+	entry2, err := testQueries.GetEntry(context.Background(), entry1.ID)
 	require.Error(t, err)
 	require.EqualError(t, err, pgx.ErrNoRows.Error())
 	require.Empty(t, entry2)
@@ -80,12 +80,12 @@ func TestQueries_ListEctryWithID(t *testing.T) {
 		CreateRandomEctry(t)
 	}
 
-	arg := ListEctryWithIDParams{
+	arg := ListEntryWithIDParams{
 		Limit:  5,
 		Offset: 5,
 	}
 
-	entrys, err := testQueries.ListEctryWithID(context.Background(), arg)
+	entrys, err := testQueries.ListEntryWithID(context.Background(), arg)
 	require.NoError(t, err)
 	require.Len(t, entrys, 5)
 	for _, entry := range entrys {
@@ -98,13 +98,13 @@ func TestQueries_ListEctryWithAccountID(t *testing.T) {
 		CreateRandomEctry(t)
 	}
 
-	arg := ListEctryWithAccountIDParams{
+	arg := ListEntryWithAccountIDParams{
 		AccountID: 1,
 		Limit:     5,
 		Offset:    5,
 	}
 
-	entrys, err := testQueries.ListEctryWithAccountID(context.Background(), arg)
+	entrys, err := testQueries.ListEntryWithAccountID(context.Background(), arg)
 	require.NoError(t, err)
 	require.Len(t, entrys, 5)
 	for _, entry := range entrys {

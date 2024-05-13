@@ -9,7 +9,7 @@ import (
 	"context"
 )
 
-const createEctry = `-- name: CreateEctry :one
+const createEntry = `-- name: CreateEntry :one
 INSERT INTO ectries (
     account_id,
     amount
@@ -18,13 +18,13 @@ INSERT INTO ectries (
      ) RETURNING id, account_id, amount, created_at
 `
 
-type CreateEctryParams struct {
+type CreateEntryParams struct {
 	AccountID int64   `json:"account_id"`
 	Amount    float64 `json:"amount"`
 }
 
-func (q *Queries) CreateEctry(ctx context.Context, arg CreateEctryParams) (Ectry, error) {
-	row := q.db.QueryRow(ctx, createEctry, arg.AccountID, arg.Amount)
+func (q *Queries) CreateEntry(ctx context.Context, arg CreateEntryParams) (Ectry, error) {
+	row := q.db.QueryRow(ctx, createEntry, arg.AccountID, arg.Amount)
 	var i Ectry
 	err := row.Scan(
 		&i.ID,
@@ -35,21 +35,21 @@ func (q *Queries) CreateEctry(ctx context.Context, arg CreateEctryParams) (Ectry
 	return i, err
 }
 
-const deleteEctry = `-- name: DeleteEctry :exec
+const deleteEntry = `-- name: DeleteEntry :exec
 DELETE FROM ectries WHERE id = $1
 `
 
-func (q *Queries) DeleteEctry(ctx context.Context, id int64) error {
-	_, err := q.db.Exec(ctx, deleteEctry, id)
+func (q *Queries) DeleteEntry(ctx context.Context, id int64) error {
+	_, err := q.db.Exec(ctx, deleteEntry, id)
 	return err
 }
 
-const getEctry = `-- name: GetEctry :one
+const getEntry = `-- name: GetEntry :one
 SELECT id, account_id, amount, created_at FROM ectries WHERE id= $1 LIMIT 1
 `
 
-func (q *Queries) GetEctry(ctx context.Context, id int64) (Ectry, error) {
-	row := q.db.QueryRow(ctx, getEctry, id)
+func (q *Queries) GetEntry(ctx context.Context, id int64) (Ectry, error) {
+	row := q.db.QueryRow(ctx, getEntry, id)
 	var i Ectry
 	err := row.Scan(
 		&i.ID,
@@ -60,23 +60,23 @@ func (q *Queries) GetEctry(ctx context.Context, id int64) (Ectry, error) {
 	return i, err
 }
 
-const listEctryWithAccountID = `-- name: ListEctryWithAccountID :many
+const listEntryWithAccountID = `-- name: ListEntryWithAccountID :many
 SELECT id, account_id, amount, created_at FROM ectries WHERE account_id=$1 ORDER BY id LIMIT $2 OFFSET $3
 `
 
-type ListEctryWithAccountIDParams struct {
+type ListEntryWithAccountIDParams struct {
 	AccountID int64 `json:"account_id"`
 	Limit     int32 `json:"limit"`
 	Offset    int32 `json:"offset"`
 }
 
-func (q *Queries) ListEctryWithAccountID(ctx context.Context, arg ListEctryWithAccountIDParams) ([]Ectry, error) {
-	rows, err := q.db.Query(ctx, listEctryWithAccountID, arg.AccountID, arg.Limit, arg.Offset)
+func (q *Queries) ListEntryWithAccountID(ctx context.Context, arg ListEntryWithAccountIDParams) ([]Ectry, error) {
+	rows, err := q.db.Query(ctx, listEntryWithAccountID, arg.AccountID, arg.Limit, arg.Offset)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Ectry
+	items := []Ectry{}
 	for rows.Next() {
 		var i Ectry
 		if err := rows.Scan(
@@ -95,22 +95,22 @@ func (q *Queries) ListEctryWithAccountID(ctx context.Context, arg ListEctryWithA
 	return items, nil
 }
 
-const listEctryWithID = `-- name: ListEctryWithID :many
+const listEntryWithID = `-- name: ListEntryWithID :many
 SELECT id, account_id, amount, created_at FROM ectries ORDER BY id LIMIT $1 OFFSET $2
 `
 
-type ListEctryWithIDParams struct {
+type ListEntryWithIDParams struct {
 	Limit  int32 `json:"limit"`
 	Offset int32 `json:"offset"`
 }
 
-func (q *Queries) ListEctryWithID(ctx context.Context, arg ListEctryWithIDParams) ([]Ectry, error) {
-	rows, err := q.db.Query(ctx, listEctryWithID, arg.Limit, arg.Offset)
+func (q *Queries) ListEntryWithID(ctx context.Context, arg ListEntryWithIDParams) ([]Ectry, error) {
+	rows, err := q.db.Query(ctx, listEntryWithID, arg.Limit, arg.Offset)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Ectry
+	items := []Ectry{}
 	for rows.Next() {
 		var i Ectry
 		if err := rows.Scan(
@@ -129,17 +129,17 @@ func (q *Queries) ListEctryWithID(ctx context.Context, arg ListEctryWithIDParams
 	return items, nil
 }
 
-const updateEctry = `-- name: UpdateEctry :one
+const updateEntry = `-- name: UpdateEntry :one
 UPDATE ectries SET amount = $2 WHERE id = $1 RETURNING id, account_id, amount, created_at
 `
 
-type UpdateEctryParams struct {
+type UpdateEntryParams struct {
 	ID     int64   `json:"id"`
 	Amount float64 `json:"amount"`
 }
 
-func (q *Queries) UpdateEctry(ctx context.Context, arg UpdateEctryParams) (Ectry, error) {
-	row := q.db.QueryRow(ctx, updateEctry, arg.ID, arg.Amount)
+func (q *Queries) UpdateEntry(ctx context.Context, arg UpdateEntryParams) (Ectry, error) {
+	row := q.db.QueryRow(ctx, updateEntry, arg.ID, arg.Amount)
 	var i Ectry
 	err := row.Scan(
 		&i.ID,
