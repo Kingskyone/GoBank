@@ -32,3 +32,12 @@ type Transfer struct {
 	Money     float64            `json:"money"`
 	CreatedAt pgtype.Timestamptz `json:"created_at"`
 }
+
+type User struct {
+	Username         string             `json:"username"`
+	HashedPassword   string             `json:"hashed_password"`
+	FullName         string             `json:"full_name"`
+	Email            string             `json:"email"`
+	PasswordChangeAt pgtype.Timestamptz `json:"password_change_at"`
+	CreatedAt        pgtype.Timestamptz `json:"created_at"`
+}

@@ -12,8 +12,9 @@ import (
 // 没有Test前缀的不会在测试时运行
 // 创建用户 测试之间最好独立运行，所以每个测试最好单独创建测试用例
 func CreateRandomAccount(t *testing.T) Account {
+	user := CreateRandomUser(t)
 	arg := CreateAccountParams{
-		Owner:    util.RandomOwner(),
+		Owner:    user.Username,
 		Balance:  float64(util.RandomBalance()),
 		Currency: util.RandomCurrency(),
 	}

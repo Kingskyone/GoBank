@@ -1,10 +1,10 @@
 package main
 
 //func main() {
-//	fmt.Println(maxScore([][]int{{9, 5, 7, 3}, {8, 9, 6, 1}, {6, 7, 14, 3}, {2, 5, 3, 1}}))
+//	fmt.Println(lyq(100, []int{40, 10, 10, 40, 100}))
 //}
 
-func maxScore(grid [][]int) int {
+func lyq(zf int, ban []int) int {
 	ret := -300003
 	return ret
 }

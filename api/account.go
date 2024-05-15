@@ -10,7 +10,7 @@ import (
 // 接收request的参数，验证
 type createAccountRequest struct {
 	Owner    string `json:"owner" binding:"required"`
-	Currency string `json:"currency" binding:"required,oneof=USD EUR CNY"`
+	Currency string `json:"currency" binding:"required,currency"`
 }
 
 // 实现创建账号   gin中的处理函数必须带有context输入
@@ -31,6 +31,12 @@ func (server Server) createAccount(ctx *gin.Context) {
 	// 插入数据
 	account, err := server.store.CreateAccount(ctx, arg)
 	if err != nil {
+		// 判断错误是否为外键错误、不可重复键错误
+		errCode := db.ErrorCode(err)
+		if errCode == db.ForeignKeyViolation || errCode == db.UniqueViolation {
+			ctx.JSON(http.StatusForbidden, errorResponse(err))
+			return
+		}
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
