@@ -1,17 +1,16 @@
 package main
 
+//
+//import (
+//	"fmt"
+//	"sort"
+//)
+//
 //func main() {
-//	fmt.Println(lyq(100, []int{40, 10, 10, 40, 100}))
+//	fmt.Println(maxProfitAssignment([]int{2, 4, 6, 8, 10}, []int{10, 20, 30, 40, 50}, []int{4, 5, 6, 7}))
+//	//fmt.Println(finMax([]int{5, 2, 1}, -1))
 //}
-
-func lyq(zf int, ban []int) int {
-	ret := -300003
-	return ret
-}
-
-func max(a int, b int) int {
-	if a > b {
-		return a
-	}
-	return b
-}
+//
+//func maxProfitAssignment(difficulty []int, profit []int, worker []int) int {
+//	sort.Ints(difficulty)
+//}

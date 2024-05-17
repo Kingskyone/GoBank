@@ -17,7 +17,7 @@ type transferRequest struct {
 }
 
 // 实现创建账号   gin中的处理函数必须带有context输入
-func (server Server) createTransfer(ctx *gin.Context) {
+func (server *Server) createTransfer(ctx *gin.Context) {
 	var req transferRequest
 	// 验证回调数据是否符合
 	if err := ctx.ShouldBindJSON(&req); err != nil {
@@ -49,7 +49,7 @@ func (server Server) createTransfer(ctx *gin.Context) {
 }
 
 // 验证账号与金钱单位是否对应
-func (server Server) validAccount(ctx *gin.Context, accountID int64, currency string) bool {
+func (server *Server) validAccount(ctx *gin.Context, accountID int64, currency string) bool {
 	account, err := server.store.GetAccount(ctx, accountID)
 	if err != nil {
 		if err == sql.ErrNoRows {

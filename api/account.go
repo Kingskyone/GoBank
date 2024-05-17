@@ -14,7 +14,7 @@ type createAccountRequest struct {
 }
 
 // 实现创建账号   gin中的处理函数必须带有context输入
-func (server Server) createAccount(ctx *gin.Context) {
+func (server *Server) createAccount(ctx *gin.Context) {
 	var req createAccountRequest
 	// 验证回调数据是否符合
 	if err := ctx.ShouldBindJSON(&req); err != nil {
@@ -50,7 +50,7 @@ type getAccountRequest struct {
 }
 
 // 实现获取账号信息
-func (server Server) getAccount(ctx *gin.Context) {
+func (server *Server) getAccount(ctx *gin.Context) {
 	var req getAccountRequest
 	// 验证回调数据是否符合    ShouldBindUri处理get
 	if err := ctx.ShouldBindUri(&req); err != nil {
@@ -78,7 +78,7 @@ type listAccountRequest struct {
 }
 
 // 实现批量获取账号信息
-func (server Server) listAccount(ctx *gin.Context) {
+func (server *Server) listAccount(ctx *gin.Context) {
 	var req listAccountRequest
 	// 验证回调数据是否符合    ShouldBindQuery处理form
 	if err := ctx.ShouldBindQuery(&req); err != nil {

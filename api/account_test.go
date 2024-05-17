@@ -56,7 +56,7 @@ func TestGetAccount(t *testing.T) {
 				Return(account, nil)
 
 			////启动http服务，发送get请求
-			//server := NewServer(db.NewStore())
+			//server := newTestServer(t, db.NewStore())
 			//recorder := httptest.NewRecorder()
 			//
 			//// 创建get请求
