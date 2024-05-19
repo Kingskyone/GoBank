@@ -48,11 +48,13 @@ func (server *Server) setupRouter() {
 	// 添加路由    传入一个或多个函数，若多个，最后一个为处理，其他为中间件
 	router.POST("/users", server.createUser)
 	router.POST("/users/login", server.loginUser)
-	router.POST("/accounts", server.createAccount)
-	router.GET("/accounts/:id", server.getAccount)
-	router.GET("/accounts", server.listAccount)
 
-	router.POST("/transfers", server.createTransfer)
+	// 设置路由组，用于绑定中间件
+	authRoutes := router.Group("/").Use(authMiddleware(server.tokenMaker))
+	authRoutes.POST("/accounts", server.createAccount)
+	authRoutes.GET("/accounts/:id", server.getAccount)
+	authRoutes.GET("/accounts", server.listAccount)
+	authRoutes.POST("/transfers", server.createTransfer)
 
 	server.router = router
 }

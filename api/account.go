@@ -2,14 +2,15 @@ package api
 
 import (
 	db "GoBank/db/sqlc"
+	"GoBank/token"
 	"database/sql"
+	"errors"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
 // 接收request的参数，验证
 type createAccountRequest struct {
-	Owner    string `json:"owner" binding:"required"`
 	Currency string `json:"currency" binding:"required,currency"`
 }
 
@@ -21,9 +22,10 @@ func (server *Server) createAccount(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
-
+	// 从上下文获取授权负载信息，从而取得用户名
+	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
 	arg := db.CreateAccountParams{
-		Owner:    req.Owner,
+		Owner:    authPayload.Username,
 		Balance:  0,
 		Currency: req.Currency,
 	}
@@ -67,6 +69,13 @@ func (server *Server) getAccount(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
+	// 从上下文获取授权负载信息，从而取得用户名
+	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
+	if account.Owner != authPayload.Username {
+		err := errors.New("无权限")
+		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
+		return
+	}
 
 	ctx.JSON(http.StatusOK, account)
 }
@@ -85,7 +94,11 @@ func (server *Server) listAccount(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
+	// 从上下文获取授权负载信息，从而取得用户名
+	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
+
 	arg := db.ListAccountParams{
+		Owner:  authPayload.Username,
 		Limit:  req.PageSize,
 		Offset: (req.PageID - 1) * req.PageSize,
 	}
