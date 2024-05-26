@@ -25,12 +25,13 @@ func NewPasetoMaker(symmericKey string) (Maker, error) {
 }
 
 // CreateToken 对指定用户创建时长为duration的token
-func (maker *PasetoMaker) CreateToken(username string, duration time.Duration) (string, error) {
+func (maker *PasetoMaker) CreateToken(username string, duration time.Duration) (string, *Payload, error) {
 	payload, err := NewPayload(username, duration)
 	if err != nil {
-		return "", err
+		return "", payload, err
 	}
-	return maker.paseto.Encrypt(maker.symmericKey, payload, nil)
+	token, err := maker.paseto.Encrypt(maker.symmericKey, payload, nil)
+	return token, payload, err
 }
 
 // VerifyToken 检查输入令牌是否有效

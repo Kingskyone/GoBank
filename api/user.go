@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5/pgtype"
 	"net/http"
+	"time"
 )
 
 // 接收request的参数   alphanum代表没有字符
@@ -83,8 +84,12 @@ type loginUserRequest struct {
 }
 
 type loginUserResponse struct {
-	AccessToken string             `json:"access_token"`
-	User        createUserResponse `json:"user"`
+	SessionID            pgtype.UUID        `json:"session_id"`
+	AccessToken          string             `json:"access_token"`
+	AccessTokenExpireAt  time.Time          `json:"access_token_expire_at"`
+	RefreshToken         string             `json:"refresh_token"`
+	RefreshTokenExpireAt time.Time          `json:"refresh_token_expire_at"`
+	User                 createUserResponse `json:"user"`
 }
 
 func (server *Server) loginUser(ctx *gin.Context) {
@@ -110,7 +115,7 @@ func (server *Server) loginUser(ctx *gin.Context) {
 		return
 	}
 	// 正确则给予token
-	accessToken, err := server.tokenMaker.CreateToken(
+	accessToken, accessPayload, err := server.tokenMaker.CreateToken(
 		user.Username,
 		server.config.AccessTokenDuration,
 	)
@@ -118,10 +123,51 @@ func (server *Server) loginUser(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
+
+	// 创建持久化token
+	refreshToken, refreshPayload, err := server.tokenMaker.CreateToken(
+		user.Username,
+		server.config.RefreshTokenDuration,
+	)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	ID := pgtype.UUID{
+		Bytes: refreshPayload.ID,
+		Valid: true,
+	}
+
+	var ExpiresAt pgtype.Timestamptz
+	err = ExpiresAt.Scan(refreshPayload.ExpiredAt)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	session, err := server.store.CreateSession(ctx, db.CreateSessionParams{
+		ID:           ID,
+		Username:     user.Username,
+		RefreshToken: refreshToken,
+		UserAgent:    ctx.Request.UserAgent(),
+		ClientIp:     ctx.ClientIP(),
+		IsBlocked:    false,
+		ExpiresAt:    ExpiresAt,
+	})
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
 	// 封装到response返回
 	rsp := loginUserResponse{
-		AccessToken: accessToken,
-		User:        newCreateUserResponse(user),
+		SessionID:            session.ID,
+		AccessToken:          accessToken,
+		AccessTokenExpireAt:  accessPayload.ExpiredAt,
+		RefreshToken:         refreshToken,
+		RefreshTokenExpireAt: refreshPayload.ExpiredAt,
+		User:                 newCreateUserResponse(user),
 	}
 	ctx.JSON(http.StatusOK, rsp)
 

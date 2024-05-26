@@ -1,16 +1,37 @@
 package main
 
 //
-//import (
-//	"fmt"
-//	"sort"
-//)
-//
 //func main() {
-//	fmt.Println(maxProfitAssignment([]int{2, 4, 6, 8, 10}, []int{10, 20, 30, 40, 50}, []int{4, 5, 6, 7}))
+//	fmt.Println(mostCompetitive([]int{3, 5, 2, 6}, 2))
 //	//fmt.Println(finMax([]int{5, 2, 1}, -1))
 //}
 //
-//func maxProfitAssignment(difficulty []int, profit []int, worker []int) int {
-//	sort.Ints(difficulty)
+//func mostCompetitive(nums []int, k int) []int {
+//	res := make([]int, k)
+//	head := 0
+//	for ind, i := range nums {
+//		for true {
+//			if (len(nums) - ind) == (k - head) {
+//				res = append(res[:head], nums[ind:]...)
+//				return res
+//			}
+//			if head == 0 {
+//				res[head] = i
+//				head++
+//				break
+//			} else if head != 0 && i >= res[head-1] {
+//				if head < k {
+//					res[head] = i
+//					head++
+//					break
+//				} else {
+//					break
+//				}
+//			} else {
+//				head--
+//				continue
+//			}
+//		}
+//	}
+//	return res
 //}

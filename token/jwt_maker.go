@@ -23,15 +23,16 @@ func NewJWTMaker(secretKey string) (Maker, error) {
 }
 
 // CreateToken 对指定用户创建时长为duration的token
-func (maker *JWTMaker) CreateToken(username string, duration time.Duration) (string, error) {
+func (maker *JWTMaker) CreateToken(username string, duration time.Duration) (string, *Payload, error) {
 	payload, err := NewPayload(username, duration)
 	if err != nil {
-		return "", err
+		return "", payload, err
 	}
 	// 创建jwtToken， 输入算法和payload
 	jwtToken := jwt.NewWithClaims(jwt.SigningMethodHS256, payload)
 	// 生成token字符串
-	return jwtToken.SignedString([]byte(maker.secretKey))
+	token, err := jwtToken.SignedString([]byte(maker.secretKey))
+	return token, payload, err
 
 }
 

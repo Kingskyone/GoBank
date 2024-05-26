@@ -48,6 +48,7 @@ func (server *Server) setupRouter() {
 	// 添加路由    传入一个或多个函数，若多个，最后一个为处理，其他为中间件
 	router.POST("/users", server.createUser)
 	router.POST("/users/login", server.loginUser)
+	router.POST("/tokens/renew_access", server.renewAccessToken)
 
 	// 设置路由组，用于绑定中间件
 	authRoutes := router.Group("/").Use(authMiddleware(server.tokenMaker))
