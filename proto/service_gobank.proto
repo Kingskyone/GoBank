@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+// 包，将多个文件组合在一起的方式
+package pb;
+
+// 导入包
+import "rpc_create_user.proto";
+import "rpc_login_user.proto";
+
+// 指定生成的代码在pb文件夹内
+option go_package = "GoBank/pb";
+
+//gRPC api
+service GoBank {
+    rpc CreateUser (CreateUserRequest) returns (CreateUserResponse) {}
+    rpc LoginUser (LoginUserRequest) returns (LoginUserResponse) {}
+}
