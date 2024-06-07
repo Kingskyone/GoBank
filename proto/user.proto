@@ -1,5 +1,5 @@
 syntax = "proto3";
-
+// 用户
 // 包，将多个文件组合在一起的方式
 package pb;
 
@@ -9,8 +9,7 @@ import "google/protobuf/timestamp.proto";
 // 指定生成的代码在pb文件夹内
 option go_package = "GoBank/pb";
 
-// 定义消息
-// 类型 变量名 = 字段号;    字段号位唯一标识
+// 定义消息 类型 变量名 = 字段号;    字段号位唯一标识
 message User {
   string username = 1;
   string full_name = 2;

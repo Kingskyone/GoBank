@@ -70,6 +70,7 @@ func runGatewayServer(config util.Config, store db.Store) {
 	if err != nil {
 		log.Fatal("cannot create server:", err)
 	}
+	// 使用蛇形命名
 	jsonOption := runtime.WithMarshalerOption(runtime.MIMEWildcard, &runtime.JSONPb{
 		MarshalOptions:   protojson.MarshalOptions{UseProtoNames: true},
 		UnmarshalOptions: protojson.UnmarshalOptions{DiscardUnknown: true},
@@ -89,6 +90,10 @@ func runGatewayServer(config util.Config, store db.Store) {
 	mux := http.NewServeMux()
 
 	mux.Handle("/", grpcMux)
+
+	// 添加Swagger
+	fs := http.FileServer(http.Dir("./doc/swagger"))
+	mux.Handle("/swagger/", http.StripPrefix("/swagger/", fs))
 
 	listener, err := net.Listen("tcp", config.HTTPServerAddress)
 	if err != nil {

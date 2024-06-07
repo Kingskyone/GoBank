@@ -4,6 +4,7 @@
 // - protoc             v5.26.0
 // source: service_gobank.proto
 
+// GoBank服务器
 // 包，将多个文件组合在一起的方式
 
 package pb

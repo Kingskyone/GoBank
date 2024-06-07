@@ -4,6 +4,7 @@
 // 	protoc        v5.26.0
 // source: user.proto
 
+// 用户
 // 包，将多个文件组合在一起的方式
 
 package pb
@@ -23,8 +24,7 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-// 定义消息
-// 类型 变量名 = 字段号;    字段号位唯一标识
+// 定义消息 类型 变量名 = 字段号;    字段号位唯一标识
 type User struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache

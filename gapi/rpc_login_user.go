@@ -56,13 +56,13 @@ func (server *Server) LoginUser(ctx context.Context, req *pb.LoginUserRequest) (
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "时间格式转换错误", err)
 	}
-
+	mtdt := server.extractMetadata(ctx)
 	_, err = server.store.CreateSession(ctx, db.CreateSessionParams{
 		ID:           ID,
 		Username:     user.Username,
 		RefreshToken: refreshToken,
-		UserAgent:    "ctx.Request.UserAgent()",
-		ClientIp:     "ctx.ClientIP()",
+		UserAgent:    mtdt.UserAgent,
+		ClientIp:     mtdt.ClientIp,
 		IsBlocked:    false,
 		ExpiresAt:    ExpiresAt,
 	})

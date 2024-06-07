@@ -1,5 +1,5 @@
 syntax = "proto3";
-
+// GoBank服务器
 // 包，将多个文件组合在一起的方式
 package pb;
 
@@ -10,7 +10,19 @@ import "google/api/annotations.proto";
 
 // 指定生成的代码在pb文件夹内
 option go_package = "GoBank/pb";
+import "protoc-gen-openapiv2/options/annotations.proto";
 
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+    info: {
+        title: "Go Bank API";
+        version: "1.0";
+        contact: {
+            name: "KingSkyone";
+            url: "https://github.com/Kingskyone/GoBank";
+            email: "sdwangty@163.com";
+        };
+    };
+};
 //gRPC api
 service GoBank {
     rpc CreateUser (CreateUserRequest) returns (CreateUserResponse) {
