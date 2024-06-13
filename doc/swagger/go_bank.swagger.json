@@ -23,6 +23,8 @@
   "paths": {
     "/v1/create_user": {
       "post": {
+        "summary": "创建新用户",
+        "description": "创建新用户API",
         "operationId": "GoBank_CreateUser",
         "responses": {
           "200": {
@@ -55,6 +57,8 @@
     },
     "/v1/login_user": {
       "post": {
+        "summary": "用户登录",
+        "description": "用户登录API，并获取access token和fresh token",
         "operationId": "GoBank_LoginUser",
         "responses": {
           "200": {

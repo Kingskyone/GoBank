@@ -10,12 +10,16 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/jackc/pgx/v5"
 	_ "github.com/lib/pq"
+	"github.com/rakyll/statik/fs"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 	"google.golang.org/protobuf/encoding/protojson"
 	"log"
 	"net"
 	"net/http"
+
+	// 通过导入改包来运行其init函数，
+	_ "GoBank/doc/statik"
 )
 
 func main() {
@@ -91,9 +95,14 @@ func runGatewayServer(config util.Config, store db.Store) {
 
 	mux.Handle("/", grpcMux)
 
-	// 添加Swagger
-	fs := http.FileServer(http.Dir("./doc/swagger"))
-	mux.Handle("/swagger/", http.StripPrefix("/swagger/", fs))
+	// 添加Swagger     如果添加了命名空间，需要使用NewWithNamespace()
+	staticFS, err := fs.New()
+	if err != nil {
+		log.Fatal("无法解析静态文件:", err)
+	}
+	// 新建一个HTTP文件服务器运行swagger
+	swaggerHandler := http.StripPrefix("/swagger/", http.FileServer(staticFS))
+	mux.Handle("/swagger/", swaggerHandler)
 
 	listener, err := net.Listen("tcp", config.HTTPServerAddress)
 	if err != nil {

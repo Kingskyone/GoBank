@@ -12,6 +12,7 @@
 编写proto文件,使用protoc、protobuf进行代码生成
 使用grpc-gateway同时生成gRPC网关来实现rpc请求与http请求的同时处理
 使用swagger作为API文档   使用swagger-ui生成文档界面
+使用statik将静态文件变为Go文件，以供HTTP服务器使用
 
 
 

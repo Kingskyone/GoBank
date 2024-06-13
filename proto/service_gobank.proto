@@ -30,11 +30,19 @@ service GoBank {
             post:"/v1/create_user"
             body:"*"
         };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            description: "创建新用户API";
+            summary: "创建新用户";
+        };
     }
     rpc LoginUser (LoginUserRequest) returns (LoginUserResponse) {
         option (google.api.http) = {
             post:"/v1/login_user"
             body:"*"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            description: "用户登录API，并获取access token和fresh token";
+            summary: "用户登录";
         };
     }
 }
