@@ -1,5 +1,5 @@
-使用 Golang、Postgres 实现的模拟银行操作逻辑,
-技术栈 Go、Gin、PostgresSQL、docker、git
+使用 Golang、Postgre 实现的模拟银行操作逻辑,
+技术栈 Go、Gin、PostgreSQL、docker、git
 
 使用dbdiagram.io写SQL代码并将其转化为sql文件
 使用golang-migrate进行数据库版本管理
@@ -13,6 +13,7 @@
 使用grpc-gateway同时生成gRPC网关来实现rpc请求与http请求的同时处理
 使用swagger作为API文档   使用swagger-ui生成文档界面
 使用statik将静态文件变为Go文件，以供HTTP服务器使用
+编写rpc中各个信息的验证函数，并集成到errdetails.BadRequest_FieldViolation中统一处理
 
 
 

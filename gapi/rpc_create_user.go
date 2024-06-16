@@ -4,12 +4,18 @@ import (
 	db "GoBank/db/sqlc"
 	"GoBank/pb"
 	"GoBank/util"
+	"GoBank/val"
 	"context"
+	"google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
 func (server *Server) CreateUser(ctx context.Context, req *pb.CreateUserRequest) (*pb.CreateUserResponse, error) {
+	// 进行数据验证
+	if violations := validateCreateUserRequest(req); violations != nil {
+		return nil, invalidArgumentError(violations)
+	}
 	// 从req中获取字段时可以使用前面加 Get 的函数
 	hashedPassword, err := util.HashPassword(req.GetPassword())
 	if err != nil {
@@ -36,4 +42,24 @@ func (server *Server) CreateUser(ctx context.Context, req *pb.CreateUserRequest)
 		User: convertUser(user),
 	}
 	return rsp, nil
+}
+
+// 验证CreateUserRequest中的参数，返回一个错误信息表
+func validateCreateUserRequest(req *pb.CreateUserRequest) (violations []*errdetails.BadRequest_FieldViolation) {
+	if err := val.ValidateUsername(req.GetUsername()); err != nil {
+		violations = append(violations, fieldViolation("username", err))
+	}
+
+	if err := val.ValidateFullName(req.GetFullName()); err != nil {
+		violations = append(violations, fieldViolation("full_name", err))
+	}
+
+	if err := val.ValidateEmail(req.GetEmail()); err != nil {
+		violations = append(violations, fieldViolation("email", err))
+	}
+
+	if err := val.ValidatePassword(req.GetPassword()); err != nil {
+		violations = append(violations, fieldViolation("password", err))
+	}
+	return violations
 }

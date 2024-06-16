@@ -4,9 +4,11 @@ import (
 	db "GoBank/db/sqlc"
 	"GoBank/pb"
 	"GoBank/util"
+	"GoBank/val"
 	"context"
 	"database/sql"
 	"github.com/jackc/pgx/v5/pgtype"
+	"google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -14,6 +16,10 @@ import (
 
 func (server *Server) LoginUser(ctx context.Context, req *pb.LoginUserRequest) (*pb.LoginUserResponse, error) {
 	//return nil, status.Errorf(codes.Unimplemented, "method LoginUser not implemented")
+	// 进行数据验证
+	if violations := validateLoginUserRequest(req); violations != nil {
+		return nil, invalidArgumentError(violations)
+	}
 
 	// 获取用户
 	user, err := server.store.GetUser(ctx, req.GetUsername())
@@ -78,4 +84,16 @@ func (server *Server) LoginUser(ctx context.Context, req *pb.LoginUserRequest) (
 		RefreshTokenExpireAt: timestamppb.New(refreshPayload.ExpiredAt),
 	}
 	return rsp, nil
+}
+
+// 验证CreateUserRequest中的参数，返回一个错误信息表
+func validateLoginUserRequest(req *pb.LoginUserRequest) (violations []*errdetails.BadRequest_FieldViolation) {
+	if err := val.ValidateUsername(req.GetUsername()); err != nil {
+		violations = append(violations, fieldViolation("username", err))
+	}
+
+	if err := val.ValidatePassword(req.GetPassword()); err != nil {
+		violations = append(violations, fieldViolation("password", err))
+	}
+	return violations
 }
