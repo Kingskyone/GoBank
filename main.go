@@ -7,6 +7,9 @@ import (
 	"GoBank/pb"
 	"GoBank/util"
 	"context"
+	"github.com/golang-migrate/migrate/v4"
+	_ "github.com/golang-migrate/migrate/v4/database/postgres" // 数据库
+	_ "github.com/golang-migrate/migrate/v4/source/file"       // 来自本地文件的迁移
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/jackc/pgx/v5"
 	_ "github.com/lib/pq"
@@ -34,6 +37,8 @@ func main() {
 	if err != nil {
 		log.Fatal("cannot connect to db:", err)
 	}
+
+	runDBMigration(config.MigrationURL, config.DbSource)
 
 	store := db.NewStore(conn)
 	//runGinServer(config, store)
@@ -127,4 +132,15 @@ func runGinServer(config util.Config, store db.Store) {
 	if err != nil {
 		log.Fatal("cannot start server:", err)
 	}
+}
+
+func runDBMigration(migrationURL string, dbSource string) {
+	migration, err := migrate.New(migrationURL, dbSource)
+	if err != nil {
+		log.Fatal("无法创建数据迁移：", err)
+	}
+	if err = migration.Up(); err != nil && err != migrate.ErrNoChange {
+		log.Fatal("数据迁移运行失败：", err)
+	}
+	log.Println("数据迁移完成")
 }
