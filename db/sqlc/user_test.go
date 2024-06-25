@@ -3,6 +3,7 @@ package db
 import (
 	"GoBank/util"
 	"context"
+	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/stretchr/testify/require"
 	"testing"
 	"time"
@@ -58,4 +59,19 @@ func TestQueries_GetUser(t *testing.T) {
 	// 比较时间是否相同，最后一个参数为允许的误差
 	require.WithinDuration(t, user1.CreatedAt.Time, user2.CreatedAt.Time, time.Second)
 	require.WithinDuration(t, user1.PasswordChangeAt.Time, user2.PasswordChangeAt.Time, time.Second)
+}
+
+func TestQueries_UpdateUserWithFullName(t *testing.T) {
+	oldUser := CreateRandomUser(t)
+	newFullName := util.RandomOwner()
+	updatedUser, err := testQueries.UpdateUser(context.Background(), UpdateUserParams{
+		FullName: pgtype.Text{String: newFullName, Valid: true},
+		Username: oldUser.Username,
+	})
+	require.NoError(t, err)
+	require.NotEmpty(t, updatedUser)
+	require.NotEqual(t, oldUser.FullName, updatedUser.FullName)
+	require.Equal(t, updatedUser.FullName, newFullName)
+	require.Equal(t, updatedUser.HashedPassword, oldUser.HashedPassword)
+	require.Equal(t, updatedUser.Email, oldUser.Email)
 }

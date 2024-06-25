@@ -7,8 +7,8 @@ import (
 )
 
 var (
-	isValidUsername = regexp.MustCompile(`^[a-z0-9_]+$`).MatchString                 // 匹配用户名的正则表达式函数
-	isValidFullName = regexp.MustCompile(`^[a-zA-Z0-9u4e00-u9fa5\\s]+$`).MatchString // 匹配姓名的正则表达式函数
+	isValidUsername = regexp.MustCompile(`^[a-z0-9_]+$`).MatchString                // 匹配用户名的正则表达式函数
+	isValidFullName = regexp.MustCompile(`^[a-zA-Z0-9u4e00-u9fa5\s]+$`).MatchString // 匹配姓名的正则表达式函数
 )
 
 // ValidateString 验证字符串是否满足长度约束

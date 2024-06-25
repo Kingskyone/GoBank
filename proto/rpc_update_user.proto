@@ -1,0 +1,22 @@
+syntax = "proto3";
+// 创建用户
+// 包，将多个文件组合在一起的方式
+package pb;
+
+// 导入包
+import "user.proto";
+
+// 指定生成的代码在pb文件夹内
+option go_package = "GoBank/pb";
+
+// 定义消息 类型 变量名 = 字段号;    字段号位唯一标识   optional可选参数
+message UpdateUserRequest {
+  string username = 1;
+  optional string full_name = 2;
+  optional string email = 3;
+  optional string password = 4;
+}
+
+message UpdateUserResponse {
+  User user = 1;
+}
