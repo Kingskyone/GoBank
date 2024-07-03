@@ -14,7 +14,7 @@ func fieldViolation(field string, err error) *errdetails.BadRequest_FieldViolati
 	}
 }
 
-// 错误验证
+// 参数无效错误验证
 func invalidArgumentError(violations []*errdetails.BadRequest_FieldViolation) error {
 	badRequest := &errdetails.BadRequest{FieldViolations: violations}
 	statusInvalid := status.New(codes.InvalidArgument, "参数无效")
@@ -25,4 +25,9 @@ func invalidArgumentError(violations []*errdetails.BadRequest_FieldViolation) er
 	}
 
 	return statusDetails.Err()
+}
+
+// 授权错误验证
+func unauthenticatedError(err error) error {
+	return status.Errorf(codes.Unauthenticated, "未经授权：%s", err)
 }

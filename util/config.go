@@ -7,6 +7,7 @@ import (
 
 // Config 保存从配置文件中读取的变量
 type Config struct {
+	Environment          string        `mapstructure:"ENVIRONMENT"`
 	DbSource             string        `mapstructure:"DB_SOURCE"`
 	ServerAddress        string        `mapstructure:"SERVER_ADDRESS"`
 	HTTPServerAddress    string        `mapstructure:"HTTP_SERVER_ADDRESS"`

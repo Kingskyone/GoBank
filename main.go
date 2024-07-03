@@ -14,12 +14,14 @@ import (
 	"github.com/jackc/pgx/v5"
 	_ "github.com/lib/pq"
 	"github.com/rakyll/statik/fs"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 	"google.golang.org/protobuf/encoding/protojson"
-	"log"
 	"net"
 	"net/http"
+	"os"
 
 	// 通过导入改包来运行其init函数，
 	_ "GoBank/doc/statik"
@@ -29,13 +31,18 @@ func main() {
 	// 读取配置文件中的内容
 	config, err := util.LoadConfig(".")
 	if err != nil {
-		log.Fatal("cannot load config:", err)
+		log.Fatal().Err(err).Msg("cannot load config:")
+	}
+
+	// 美化log输出，不直接显示json格式     生产环境中打开
+	if config.Environment == "development" {
+		log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
 	}
 
 	ctx := context.Background()
 	conn, err := pgx.Connect(ctx, config.DbSource)
 	if err != nil {
-		log.Fatal("cannot connect to db:", err)
+		log.Fatal().Err(err).Msg("cannot connect to db:")
 	}
 
 	runDBMigration(config.MigrationURL, config.DbSource)
@@ -50,25 +57,27 @@ func runGRPCServer(config util.Config, store db.Store) {
 
 	server, err := gapi.NewServer(config, store)
 	if err != nil {
-		log.Fatal("cannot create server:", err)
+		log.Fatal().Err(err).Msg("cannot create server:")
 	}
+	// grpc拦截器 log日志捕获和输出
+	grpcLogger := grpc.UnaryInterceptor(gapi.GrpcLogger)
 
-	grpcServer := grpc.NewServer()
+	grpcServer := grpc.NewServer(grpcLogger)
 	pb.RegisterGoBankServer(grpcServer, server)
-	log.Println(grpcServer.GetServiceInfo())
+	//log.Println(grpcServer.GetServiceInfo())
 
 	// 注册自我反射
 	reflection.Register(grpcServer)
 
 	listener, err := net.Listen("tcp", config.GRPCServerAddress)
 	if err != nil {
-		log.Fatal("cannot create listener:", err)
+		log.Fatal().Err(err).Msg("cannot create listener:")
 	}
 
-	log.Printf("start gRPC server at %s", listener.Addr().String())
+	log.Info().Msgf("start gRPC server at %s", listener.Addr().String())
 	err = grpcServer.Serve(listener)
 	if err != nil {
-		log.Fatal("cannot start gRPC server:", err)
+		log.Fatal().Err(err).Msg("cannot start gRPC server:")
 	}
 
 }
@@ -77,7 +86,7 @@ func runGatewayServer(config util.Config, store db.Store) {
 
 	server, err := gapi.NewServer(config, store)
 	if err != nil {
-		log.Fatal("cannot create server:", err)
+		log.Fatal().Err(err).Msg("cannot create server:")
 	}
 	// 使用蛇形命名
 	jsonOption := runtime.WithMarshalerOption(runtime.MIMEWildcard, &runtime.JSONPb{
@@ -92,7 +101,7 @@ func runGatewayServer(config util.Config, store db.Store) {
 
 	err = pb.RegisterGoBankHandlerServer(ctx, grpcMux, server)
 	if err != nil {
-		log.Fatal("无法注册服务器:", err)
+		log.Fatal().Err(err).Msg("无法注册服务器:")
 	}
 
 	// 创建http多路复用器
@@ -103,7 +112,7 @@ func runGatewayServer(config util.Config, store db.Store) {
 	// 添加Swagger     如果添加了命名空间，需要使用NewWithNamespace()
 	staticFS, err := fs.New()
 	if err != nil {
-		log.Fatal("无法解析静态文件:", err)
+		log.Fatal().Err(err).Msg("无法解析静态文件:")
 	}
 	// 新建一个HTTP文件服务器运行swagger
 	swaggerHandler := http.StripPrefix("/swagger/", http.FileServer(staticFS))
@@ -111,13 +120,13 @@ func runGatewayServer(config util.Config, store db.Store) {
 
 	listener, err := net.Listen("tcp", config.HTTPServerAddress)
 	if err != nil {
-		log.Fatal("cannot create listener:", err)
+		log.Fatal().Err(err).Msg("cannot create listener:")
 	}
 
-	log.Printf("start HTTP gateway server at %s", listener.Addr().String())
+	log.Info().Msgf("start HTTP gateway server at %s", listener.Addr().String())
 	err = http.Serve(listener, mux)
 	if err != nil {
-		log.Fatal("cannot start HTTP gateway server:", err)
+		log.Fatal().Err(err).Msg("cannot start HTTP gateway server:")
 	}
 
 }
@@ -125,22 +134,22 @@ func runGatewayServer(config util.Config, store db.Store) {
 func runGinServer(config util.Config, store db.Store) {
 	server, err := api.NewServer(config, store)
 	if err != nil {
-		log.Fatal("cannot create server:", err)
+		log.Fatal().Err(err).Msg("cannot create server:")
 	}
 
 	err = server.Start(config.HTTPServerAddress)
 	if err != nil {
-		log.Fatal("cannot start server:", err)
+		log.Fatal().Err(err).Msg("cannot start server:")
 	}
 }
 
 func runDBMigration(migrationURL string, dbSource string) {
 	migration, err := migrate.New(migrationURL, dbSource)
 	if err != nil {
-		log.Fatal("无法创建数据迁移：", err)
+		log.Fatal().Err(err).Msg("无法创建数据迁移：")
 	}
 	if err = migration.Up(); err != nil && err != migrate.ErrNoChange {
-		log.Fatal("数据迁移运行失败：", err)
+		log.Fatal().Err(err).Msg("数据迁移运行失败：")
 	}
-	log.Println("数据迁移完成")
+	log.Info().Msg("数据迁移完成")
 }

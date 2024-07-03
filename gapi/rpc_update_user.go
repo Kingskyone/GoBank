@@ -14,18 +14,29 @@ import (
 )
 
 func (server *Server) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest) (*pb.UpdateUserResponse, error) {
+	//验证用户权限
+	authPayload, err := server.authorizeUser(ctx)
+	if err != nil {
+		return nil, unauthenticatedError(err)
+	}
+
 	// 进行数据验证
 	if violations := validateUpdateUserRequest(req); violations != nil {
 		return nil, invalidArgumentError(violations)
 	}
 	// 从req中获取字段时可以使用前面加 Get 的函数
 
+	//验证用户和修改的用户是否对应
+	if authPayload.Username != req.GetUsername() {
+		return nil, status.Errorf(codes.PermissionDenied, "无法更新当前用户，用户名不匹配")
+	}
+
 	arg := db.UpdateUserParams{
 		Username: req.GetUsername(),
-		HashedPassword: pgtype.Text{
-			String: req.GetFullName(),
-			Valid:  req.FullName != nil,
-		},
+		//HashedPassword: pgtype.Text{
+		//	String: req.GetFullName(),
+		//	Valid:  req.FullName != nil,
+		//},
 		FullName: pgtype.Text{
 			String: req.GetFullName(),
 			Valid:  req.FullName != nil,
