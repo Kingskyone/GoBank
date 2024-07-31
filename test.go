@@ -1,11 +1,19 @@
 package main
 
-//func main() {
-//	s := []int{1, 2, 3}
-//	f(s)
-//	fmt.Println(s[4])
-//}
-//
-//func f(s []int) {
-//	s = append(s[:2], s[3:]...)
-//}
+import "fmt"
+
+type test1 struct {
+	name int
+	age  int
+}
+
+type test2 struct {
+	name int
+	age  int
+}
+
+func main() {
+	a := test1{}
+	b := test2{}
+	fmt.Println(a == b)
+}

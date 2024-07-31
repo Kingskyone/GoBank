@@ -1,4 +1,4 @@
-使用 Golang、Postgre 实现的模拟银行操作逻辑,
+使用 Golang、Postgre 实现,
 技术栈 Go、Gin、PostgreSQL、docker、git
 
 使用dbdiagram.io写SQL代码并将其转化为sql文件
@@ -28,3 +28,10 @@
 8. 在 proto 文件夹下编写 gRPC 代码，使用protoc在`pb`中生成对应的gRPC服务器以及gateway代码
 9. 在 gapi 文件夹下编写gRPC代码的封装
 
+
+项目描述: 本项目是个人独立开发的一个校园积分管理系统,
+实现了用户创建、用户登录、社团积分账户创建、积分转账、积分管理等功能，
+系统基于Gin、gRPC进行开发，使用Docker进行系统、PostgreSQL数据库的部署，
+使用redis实现系统数据缓存功能，使用RocketMQ实现消息队列，
+使用paseto进行登录加密，数据库中的密码使用bcrypt加密存储
+并使用testing测试文件、Postman进行系统测试。
